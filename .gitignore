@@ -2,3 +2,5 @@ CMakeLists.txt
 cmake-build-debug
 .idea
 *.exe
+**/*.json
+.vs
