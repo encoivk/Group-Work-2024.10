@@ -4,3 +4,9 @@ cmake-build-debug
 *.exe
 **/*.json
 .vs
+x64
+x86
+*.sln
+*.vcxproj
+*.filters
+*.user
