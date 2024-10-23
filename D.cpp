@@ -3,6 +3,7 @@
 //
 
 #include<iostream>
+#include <map>
 #include <unordered_map>
 #include <vector>
 using namespace std;
@@ -13,17 +14,18 @@ int main()
     cin>>n>>k;
     for(int i=1;i<=n-1;i++)
     {
-        vector<int> tempList;
+        vector<int> tempList(n-i);
         for(int j=1;j<=n-i;j++)
         {
             cin>>tempList[j];
+            cout<<"hello"<<tempList[j]<<endl;
         }
         numList.push_back(tempList);
     }
-    unordered_map<int,int> map;//每条道路经过的人数
+    map<int,int> numMap;//每条道路经过的人数
     for(int i=1;i<=n-1;i++)
     {
-        map.insert(i,0);
+        numMap.insert({i,0});
     }
     for(int i=1;i<=numList.size();i++)
     {
@@ -32,14 +34,24 @@ int main()
         {
             for(int p=j;p>=1;p--)
             {
-                map[p]+=temp[j];
+                numMap[p]+=temp[j];
             }
         }
     }
     int left=1,right=left+k-1,maxNum=0;
     for(int i=1;i<=right;i++)
     {
-        maxNum+=
+        maxNum+=numMap[i];
     }
-
+    int tempNum=maxNum;
+    while(true)
+    {
+        right++;
+        if(numMap.find(right)==numMap.end())break;
+        tempNum+=numMap[right];
+        tempNum-=numMap[left];
+        left++;
+        maxNum=max(tempNum,maxNum);
+    }
+    cout<<maxNum<<endl;
 }
