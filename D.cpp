@@ -18,7 +18,6 @@ int main()
         for(int j=1;j<=n-i;j++)
         {
             cin>>tempList[j];
-            //cout<<"hello"<<tempList[j]<<endl;
         }
         numList.push_back(tempList);
     }
