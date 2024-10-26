@@ -119,6 +119,7 @@ void getMax(Graph &G,int v,int N)
 		TEMP_NUM=min(TEMP_NUM,tempLen);
 		getMax(G,i,N);
 		TEMP_NUM=currentLen;
+		visited[i]=0;
 	}
 }
 
@@ -138,12 +139,12 @@ int main()
 	{
 		int x,y,len;
 		cin>>x>>y>>len;
-		cout<<x<<" "<<y<<" "<<len<<endl;
 		if(y>N) {
 			cout<<"input error"<<endl;
 			return 0;
 		}
 		addArc(G,x,y,len);
+		addArc(G,y,x,len);
 	}
 	getMax(G,1,N);
 	cout<<MAX_NUM<<endl;
