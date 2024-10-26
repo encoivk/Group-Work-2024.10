@@ -52,14 +52,14 @@ int firstAdj(Graph &G, int v)
 int nextAdj(Graph &G, int v, int w)
 {
 	EdgeNode *p;
-	p=G.VerList[v].firstEdge;         //取顶点v的边链表头指针
+	p=G.VerList[v].firstEdge;
 	while(p->next)
 	{
 		if(p->adjVer==w)
-			return p->next->adjVer;  //返回w之后下一个邻接点编号
+			return p->next->adjVer;
 		p=p->next;
 	}
-	return 0;                        //未找到下一个邻接点，返回0
+	return 0;
 }
 
 void addArc(Graph &G,int v,int w,int len) //v,m代表两个顶点,len代表输送量
@@ -124,6 +124,7 @@ void getMax(Graph &G,int v,int N)
 
 int main()
 {
+	visited[1]=1;
 	Graph G;
 	G.ArcNum=0;
 	G.VerNum=1;
