@@ -9,34 +9,28 @@ using namespace std;
 #define INF 65535          //定义无穷大
 #define MaxVerNum  10000     //定义最大顶点个数
 
-typedef struct eNode       //边链表结点结构
+struct EdgeNode       //边链表结点结构
 {
 	int adjVer;            //邻接顶点地址，此处为顶点在顶点表中序号，从1开始
 	int eInfo;       //边链表中表示边的相关信息，比如表的权值
-	eNode* next;    //指向边链表中的下一个结点
-}EdgeNode;                 //边链表结点类型
+	EdgeNode* next;    //指向边链表中的下一个结点
+};
 
-typedef struct vNode       //顶点表中元素结构
+struct VerNode       //顶点表中元素结构
 {
 	int data;      //存放图中顶点的数据
 	EdgeNode* firstEdge;   //指向此顶点关联的第一条边的指针，即边链表的头指针
-}VerNode;
+};
 
-typedef struct GraphAdjLinkList
+struct Graph
 {
 	VerNode VerList[MaxVerNum+1];  //存放顶点的顺序表，数组0单元不用
 	int VerNum;                    //顶点数
 	int ArcNum;                    //弧（边）数
-}Graph;                            //图的类型名
+};
 
 
 bool visited[MaxVerNum+1];  //全局数组，标记顶点是否已经被访问。0--未访问；1--已访问。数组0单元不用
-
-void visit(Graph &G, int verID)
-{         //顶点编号从1开始，数组0单元不用
-	cout<<G.VerList[verID].data<<" ";
-	visited[verID]=true;
-}
 
 //搜索顶点v的第一个邻接顶点
 int firstAdj(Graph &G, int v)
