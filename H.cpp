@@ -5,111 +5,147 @@
 #include<iostream>
 #include <vector>
 using namespace std;
-const int maxn = 200233;
 
-struct Splay {
-    int ch[maxn][2], fa[maxn], tag[maxn];
+#define INF 65535          //定义无穷大
+#define MaxVerNum  100     //定义最大顶点个数
+typedef int eInfoType;     //边链表中关于边的信息的数据类型，比如，带权图中可以表示边的权值
+typedef int cellType;      //定义邻接矩阵中元素的数据类型。
 
-    void clear(int x) { ch[x][0] = ch[x][1] = fa[x] = tag[x] = 0; }
+typedef struct eNode       //边链表结点结构
+{
+	int adjVer;            //邻接顶点地址，此处为顶点在顶点表中序号，从1开始
+	eInfoType eInfo;       //边链表中表示边的相关信息，比如表的权值
+	eNode* next;    //指向边链表中的下一个结点
+}EdgeNode;                 //边链表结点类型
 
-    int getch(int x) { return ch[fa[x]][1] == x; }
+typedef struct vNode       //顶点表中元素结构
+{
+	int data;      //存放图中顶点的数据
+	EdgeNode* firstEdge;   //指向此顶点关联的第一条边的指针，即边链表的头指针
+}VerNode;
 
-    int isroot(int x) { return ch[fa[x]][0] != x && ch[fa[x]][1] != x; }
+typedef struct GraphAdjLinkList
+{
+	VerNode VerList[MaxVerNum+1];  //存放顶点的顺序表，数组0单元不用
+	int VerNum;                    //顶点数
+	int ArcNum;                    //弧（边）数
+}Graph;                            //图的类型名
 
-    void pushdown(int x) {
-        if (tag[x]) {
-            if (ch[x][0])
-                swap(ch[ch[x][0]][0], ch[ch[x][0]][1]), tag[ch[x][0]] ^= 1;
-            if (ch[x][1])
-                swap(ch[ch[x][1]][0], ch[ch[x][1]][1]), tag[ch[x][1]] ^= 1;
-            tag[x] = 0;
-        }
-    }
 
-    void update(int x) {
-        if (!isroot(x))
-            update(fa[x]);
-        pushdown(x);
-    }
+bool visited[MaxVerNum+1];  //全局数组，标记顶点是否已经被访问。0--未访问；1--已访问。数组0单元不用
 
-    void rotate(int x) {
-        int y = fa[x], z = fa[y], chx = getch(x), chy = getch(y);
-        fa[x] = z;
-        if (!isroot(y))
-            ch[z][chy] = x;
-        ch[y][chx] = ch[x][chx ^ 1];
-        fa[ch[x][chx ^ 1]] = y;
-        ch[x][chx ^ 1] = y;
-        fa[y] = x;
-    }
+void visit(Graph &G, int verID)
+{         //顶点编号从1开始，数组0单元不用
+	cout<<G.VerList[verID].data<<" ";
+	visited[verID]=true;
+}
 
-    void splay(int x) {
-        update(x);
-        for (int f = fa[x]; f = fa[x], !isroot(x); rotate(x))
-            if (!isroot(f))
-                rotate(getch(x) == getch(f) ? f : x);
-    }
+//搜索顶点v的第一个邻接顶点
+int firstAdj(Graph &G, int v)
+{
+	EdgeNode *p;
+	p=G.VerList[v].firstEdge;
+	if(p)
+		return p->adjVer;
+	else
+		return 0;
+}
+//搜索顶点v位于邻接点w之后的下一个邻接点
+int nextAdj(Graph &G, int v, int w)
+{
+	EdgeNode *p;
+	p=G.VerList[v].firstEdge;         //取顶点v的边链表头指针
+	while(p->next)
+	{
+		if(p->adjVer==w)
+			return p->next->adjVer;  //返回w之后下一个邻接点编号
+		p=p->next;
+	}
+	return 0;                        //未找到下一个邻接点，返回0
+}
 
-    void access(int x) {
-        for (int f = 0; x; f = x, x = fa[x])
-            splay(x), ch[x][1] = f;
-    }
+void addArc(Graph &G,int v,int w,int len) //v,m代表两个顶点,len代表输送量
+{
+	if(G.VerNum<w)
+	{
+		G.VerList[w].data=w;
+		G.VerList[w].firstEdge=nullptr;
+		G.VerNum++;
+	}
+	EdgeNode* edgeNode=new EdgeNode;
+	edgeNode->next=nullptr;
+	edgeNode->eInfo=len;
+	edgeNode->adjVer=w;
+	EdgeNode *p=G.VerList[v].firstEdge;
+	if(p==nullptr) {
+		G.VerList[v].firstEdge=edgeNode;
+		G.ArcNum++;
+		return;
+	}
+	while(p->next!=nullptr)
+	{
+		p=p->next;
+	}
+	p->next=edgeNode;
+	G.ArcNum++;
+}
 
-    void makeroot(int x) {
-        access(x);
-        splay(x);
-        swap(ch[x][0], ch[x][1]);
-        tag[x] ^= 1;
-    }
+int getLen(Graph &G,int v,int w)   //获取两个顶点之间的输送量
+{
+	EdgeNode *p;
+	p=G.VerList[v].firstEdge;
+	while(p->adjVer!=w)
+	{
+		p=p->next;
+	}
+	return p->eInfo;
+}
+int TEMP_NUM=9999999;//全局变量表示当前路径的输送量
+int MAX_NUM=0;//全局变量表示输送最大值
+void getMax(Graph &G,int v,int N)
+{
+	if(v==N)
+	{
+		if(TEMP_NUM>MAX_NUM)
+		{
+			MAX_NUM=TEMP_NUM;
+		}
+		return;
+	}
+	for(int i=firstAdj(G,v);i!=0;i=nextAdj(G,v,i))
+	{
+		if(visited[i]==1&&i!=N)continue;
+		visited[i]=1;
+		int tempLen=getLen(G,v,i);
+		int currentLen=TEMP_NUM;
+		TEMP_NUM=min(TEMP_NUM,tempLen);
+		getMax(G,i,N);
+		TEMP_NUM=currentLen;
+	}
+}
 
-    int find(int x) {
-        access(x);
-        splay(x);
-        while (ch[x][0])
-            x = ch[x][0];
-        splay(x);
-        return x;
-    }
-} st;
-
-void solve() {
-    int n = read(), q = read();
-    vector<int> p(n + 1);
-    pmr::vector<bool> vis(n + 1, false);
-    for (int i = 1; i <= n; i++) {
-        p[i] = read();
-    }
-    for (int qi = 0; qi < q; qi++) {
-        int opi = read(), u = read(), v = read();
-        if (opi == 1) {
-            if (st.find(u) != st.find(v)) {
-                st.makeroot(u), st.fa[u] = v;
-            }
-            vis[u] = vis[v] = 1;
-        }
-        if (opi == 2) {
-            st.makeroot(u);
-            st.access(v);
-            st.splay(v);
-            if (st.ch[v][0] == u && !st.ch[u][1])
-                st.ch[v][0] = st.fa[u] = 0;
-            vis[u] = vis[v] = 1;
-        }
-        if (opi == 3) {
-            vector<int> s;
-            for (int i = 1; i <= n; i++) {
-                if (vis[i] && st.find(u) == st.find(i)) {
-                    s.pb(p[i]);
-                }
-            }
-            sort(s.begin(), s.end());
-            if (s.size() < v) {
-                write(0);
-                putchar('\n');
-            } else {
-                write(s[v - 1]);
-                putchar('\n');
-            }
-        }
-    }
+int main()
+{
+	Graph G;
+	G.ArcNum=0;
+	G.VerNum=1;
+	VerNode verNode=VerNode();
+	verNode.data=1;
+	verNode.firstEdge=nullptr;
+	G.VerList[1]=verNode;//初始化第一个站点
+	int N,M;
+	cin>>N>>M;
+	for(int i=1;i<=M;i++)
+	{
+		int x,y,len;
+		cin>>x>>y>>len;
+		cout<<x<<" "<<y<<" "<<len<<endl;
+		if(y>N) {
+			cout<<"input error"<<endl;
+			return 0;
+		}
+		addArc(G,x,y,len);
+	}
+	getMax(G,1,N);
+	cout<<MAX_NUM<<endl;
 }
