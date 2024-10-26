@@ -7,14 +7,12 @@
 using namespace std;
 
 #define INF 65535          //定义无穷大
-#define MaxVerNum  100     //定义最大顶点个数
-typedef int eInfoType;     //边链表中关于边的信息的数据类型，比如，带权图中可以表示边的权值
-typedef int cellType;      //定义邻接矩阵中元素的数据类型。
+#define MaxVerNum  10000     //定义最大顶点个数
 
 typedef struct eNode       //边链表结点结构
 {
 	int adjVer;            //邻接顶点地址，此处为顶点在顶点表中序号，从1开始
-	eInfoType eInfo;       //边链表中表示边的相关信息，比如表的权值
+	int eInfo;       //边链表中表示边的相关信息，比如表的权值
 	eNode* next;    //指向边链表中的下一个结点
 }EdgeNode;                 //边链表结点类型
 
@@ -100,7 +98,7 @@ int getLen(Graph &G,int v,int w)   //获取两个顶点之间的输送量
 	}
 	return p->eInfo;
 }
-int TEMP_NUM=9999999;//全局变量表示当前路径的输送量
+int TEMP_NUM=INF;//全局变量表示当前路径的输送量
 int MAX_NUM=0;//全局变量表示输送最大值
 void getMax(Graph &G,int v,int N)
 {
