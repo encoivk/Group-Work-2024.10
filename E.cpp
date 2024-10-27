@@ -30,8 +30,10 @@ void simulate(int A,int B) {
         count++;
     }
     count=1;
-    A=dirY[A];
-    B=dirY[B];
+    A=dirY[startA];
+    B=dirY[startB];
+    preA=startA;
+    preB=startB;
     while(true) {
         if((startA==A&&startB==B)||(A==preA&&B==preB)||(A==B))break;
         if(crossType[A]!=crossType[B]) {
