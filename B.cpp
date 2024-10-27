@@ -1,11 +1,6 @@
-//
-// Created by XXS on 2024/10/24.
-//
 #include <iostream>
 #include <vector>
 using namespace std;
-
-//B
 bool isEco(long n) {
     // 遍历所有可能的x*y=n
     for (long x = 1; x <= n; x++) {
@@ -40,8 +35,3 @@ int main() {
         cout << EcoNum(index) << endl;
     }
 }
-
-
-
-
-

@@ -1,11 +1,8 @@
-//
-// Created by XXS on 2024/10/24.
-//
-//J
-#include <vector>
-#include <set>
-#include<iostream>
+//	//	//J
+#include <iostream>
 using namespace std;
+#include <vector>
+static int mod = 1e9 + 7;
 int gys(int a, int b) {//最大公约数
     while (b != 0) {
         int temp = b;
@@ -20,25 +17,18 @@ bool areCoprime(int a, int b) {//是否互质
 int countCoprimePairs(int n, vector<int>& a) {
     int pos = 0;
     for (int i = 1; i <= n; i++) {
-        for (int j = i; j <= n; j++) {
-            if (i != j && areCoprime(i, j)) {
-                pos++;
-            }
-        }
+        for (int j = i; j <= n; j++)
+            if (i != j && areCoprime(i, j)) pos++;
     }
-    cout <<"pos:" << pos << endl;
     int num = 0;
     for (int i = 1; i <= n; i++) {
         for (int j = 1; j <= n; j++) {
-            if (i!=j&&a[i - 1] != 0 && a[j - 1] != 0 && areCoprime(a[i - 1], a[j - 1])) {
-                cout << a[i - 1] << a[j - 1] << endl;
+            if (i != j && a[i - 1] != 0 && a[j - 1] != 0 && areCoprime(a[i - 1], a[j - 1]))
                 num++;
-            }
         }
     }
     num = num > 1 ? num : 1;
-    cout <<"num:"<< num << endl;
-    return num * pos;
+    return (num * pos) % mod;
 }
 int main() {
     int T;
@@ -47,10 +37,9 @@ int main() {
         int n;
         cin >> n; //槽位数量
         vector<int> a(n);
-        for (int i = 0; i < n; ++i) {
+        for (int i = 0; i < n; ++i)
             cin >> a[i]; //新能源量
-        }
         int result = countCoprimePairs(n, a);
-        cout << result<< endl; // 输出结果
+        cout << result << endl; // 输出结果
     }
 }

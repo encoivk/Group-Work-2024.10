@@ -1,7 +1,3 @@
-//
-// Created by XXS on 2024/10/23.
-//
-
 #include<iostream>
 #include <vector>
 using namespace std;
