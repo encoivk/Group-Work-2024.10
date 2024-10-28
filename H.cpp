@@ -22,7 +22,7 @@ struct Graph
 {
 	VerNode VerList[MaxVerNum+1];  //存放顶点的顺序表，数组0单元不用
 	int VerNum;                    //顶点数
-	int ArcNum;                    //弧（边）数
+	int ArcNum;                    //弧数
 };
 
 
