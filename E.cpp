@@ -20,7 +20,7 @@ void simulate(int A,int B) {
     while(true) {
         if((startA==A&&startB==B)||(A==preA&&B==preB)||(A==B))break;
         if(crossType[A]!=crossType[B]) {
-            result.push_back(count+"");
+            result.push_back(to_string(count));
             return;
         }
         preA=A;
