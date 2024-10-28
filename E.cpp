@@ -1,5 +1,6 @@
 #include<iostream>
 #include<vector>
+#include<set>
 using namespace std;
 
 vector<string> result;
@@ -11,37 +12,40 @@ void simulate(int A,int B) {
         result.push_back("0");
         return;
     }
+    set<pair<int,int>>visitedPath;
+    pair<int,int> crossPair(A,B);
+    visitedPath.insert(crossPair);
     int count=1;
-    int startA=A,startB=B;
+    int startA=A;
+    int startB=B;
     A=dirX[A];
     B=dirX[B];
-    int preA=startA;
-    int preB=startB;
     while(true) {
-        if((startA==A&&startB==B)||(A==preA&&B==preB)||(A==B))break;
+        pair<int,int> tempPair(A,B);
+        if((visitedPath.find(tempPair)!=visitedPath.end())||(A==B))break;
         if(crossType[A]!=crossType[B]) {
             result.push_back(to_string(count));
             return;
         }
-        preA=A;
-        preB=B;
+        visitedPath.insert(tempPair);
         A=dirX[A];
         B=dirX[B];
         count++;
     }
     count=1;
+    set<pair<int,int>>().swap(visitedPath);//清空经过的路口
+    visitedPath.insert(crossPair);
     A=dirY[startA];
     B=dirY[startB];
-    preA=startA;
-    preB=startB;
+
     while(true) {
-        if((startA==A&&startB==B)||(A==preA&&B==preB)||(A==B))break;
+        pair<int,int> tempPair(A,B);
+        if((visitedPath.find(tempPair)!=visitedPath.end())||(A==B))break;
         if(crossType[A]!=crossType[B]) {
             result.push_back(to_string(count));
             return;
         }
-        preA=A;
-        preB=B;
+        visitedPath.insert(tempPair);
         A=dirY[A];
         B=dirY[B];
         count++;
