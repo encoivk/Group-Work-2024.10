@@ -1,51 +1,65 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-
 using namespace std;
-
-struct Edge {
-    int from;
-    int to;
-    int absorption; // 两个仓库的吸光能力乘积
-};
-
-bool compareEdges(const Edge& a, const Edge& b) {
-    return a.absorption > b.absorption;
+vector<vector<int>> side(100);
+vector<bool>sideVisited(100,{false});
+vector<int>sideSum(100);
+vector<int>pointNum(101);
+int maxSum=0;//最大光照
+int tempSum=0;
+int usableNum;//可用边数
+int N;
+void start() {     //求出每条路径的光照
+    for(int i=1;i<N;i++) {
+        int sum=pointNum[side[i][0]]*pointNum[side[i][1]];
+        sideSum[i]=sum;
+    }
 }
-
-int main() {
-    int n;
-    cin >> n;
-
-    vector<int> absorption(n + 1);
-    vector<Edge> edges;
-
-    for (int i = 0; i < n - 1; i++) {
-        int a, b;
-        cin >> a >> b;
-        edges.push_back({ a, b });
-    }
-    for (int i = 1; i <= n; i++) {
-        cin >> absorption[i];
-    }
-    for (int i = 0; i < n - 1; i++) {
-        edges[i].absorption = absorption[edges[i].from] * absorption[edges[i].to];
-    }
-    // 按照吸光能力乘积降序排序
-    sort(edges.begin(), edges.end(), compareEdges);
-
-    vector<bool> used(n + 1, false);
-    int maxAbsorption = 0;
-
-    for (const auto& edge : edges) {
-        if (!used[edge.from] && !used[edge.to]) {
-            maxAbsorption += edge.absorption;
-            used[edge.from] = true;
-            used[edge.to] = true;
-            //cout << edge.from << edge.to << "  ";
+void backtrack() {
+    for(int i=1;i<N;i++) {
+        if(usableNum==0) {
+            maxSum=max(tempSum,maxSum);
+            return;
+        }
+        if(sideVisited[i]==false) {
+            vector<int> temp;
+            for(int j=1;j<N;j++) {
+                if(((side[j][0]==side[i][0])||(side[j][1]==side[i][1])
+                    ||(side[j][1]==side[i][0])||(side[j][0]==side[i][1]))
+                    &&sideVisited[j]==false
+                    ) {
+                    sideVisited[j]=true;
+                    temp.push_back(j);
+                    usableNum--;
+                }
+            }
+            tempSum+=sideSum[i];
+            backtrack();
+            tempSum-=sideSum[i];
+            for(auto it=temp.begin();it!=temp.end();it++) {
+                sideVisited[*it]=false;
+                usableNum++;
+            }
         }
     }
 
-    cout << maxAbsorption << endl;
+}
+int main() {
+    cin>>N;
+    usableNum=N-1;
+    for (int i = 1; i < N; ++i) {
+        int pointA,pointB;
+        cin>>pointA>>pointB;
+        side[i].push_back(pointA);
+        side[i].push_back(pointB);
+    }
+    for(int i=1;i<=N;i++) {
+        int num;
+        cin>>num;
+        pointNum[i]=num;
+    }
+    start();
+    backtrack();
+    cout<<maxSum<<endl;
+
 }
